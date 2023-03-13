@@ -23,4 +23,16 @@ class Produto extends Model
         'nome',
         'descricao'
     ];
+
+    public function buscarPorNome(string $nome) 
+    {
+        $nome = '%' . $nome . '%';
+
+        return self::where('nome', 'LIKE', $nome)->get();
+    }
+
+    public function getTextAttribute(): string
+    {
+        return $this->attributes['nome'];
+    }
 }

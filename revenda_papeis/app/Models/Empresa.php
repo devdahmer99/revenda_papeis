@@ -43,7 +43,36 @@ class Empresa extends Model
         return $this->hasMany(MovimentoEstoque::class);
     }
 
-    
+    public static function buscarPorNomeTipo(string $nome, string $tipo)
+    {
+        $nome = '%' . $nome . '%';
+        
+        return self::where('nome', 'LIKE', $nome)
+                    ->where('tipo', $tipo)
+                    ->get();
+    }
 
+    public static function buscarPorId(int $id)
+    {
+        return self::with([
+            'movimentosEstoque' => function($query) {
+                $query->latest()->take(5);
+            },
+            'movimentosEstoque' => function($q) {
+                $q->withTrashed();
+            }
+        ])
+        ->findOrFail($id);
+    }
+
+
+    public function getTextAttribuite(): string
+    {
+        return \sprintf(
+            '%s (%s)',
+            $this->attributes['nome'],
+            $this->attributes['razao_social']
+        );
+    }
 
 }
